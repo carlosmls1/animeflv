@@ -153,10 +153,10 @@ router.get('/AnimeTrailers/:title' , (req , res) =>{
     });
 });
 
-router.get('/GetAnimeInfo/:id*/:title' , (req , res) =>{
-  let id = `anime${req.params[0]}`;
+router.get('/GetAnimeInfo/:id/:title' , (req , res) =>{
+  let id = `anime/000/` + req.params.id;
   let title = req.params.title;
-  api.getAnimeInfo(id , title)
+  api.getAnimeInfo(id, title)
     .then(info =>{
       res.status(200).json({
         info

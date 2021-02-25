@@ -3,8 +3,8 @@ const cheerioTableparser = require('cheerio-tableparser');
 const cloudscraper = require('cloudscraper');
 const {MergeRecursive , urlify} = require('../utils/index');
 const {
-  BASE_URL         , SEARCH_URL             , BROWSE_URL , 
-  ANIME_VIDEO_URL  , BASE_EPISODE_IMG_URL   , 
+  BASE_URL         , SEARCH_URL             , BROWSE_URL ,
+  ANIME_VIDEO_URL  , BASE_EPISODE_IMG_URL   ,
   BASE_JIKA_URL    , BASE_MYANIME_LIST_URL
 } = require('./urls');
 
@@ -20,7 +20,7 @@ const animeExtraInfo = async(title) =>{
   const data = await cloudscraper.get(animeDetails);
   const body = Array(JSON.parse(data));
   const promises = [];
-  
+
   body.map(doc =>{
     promises.push({
       titleJapanese: doc.title_japanese,
@@ -30,7 +30,7 @@ const animeExtraInfo = async(title) =>{
       aired:{
         from: doc.aired.from,
         to: doc.aired.to,
-        string: doc.aired.string  
+        string: doc.aired.string
       },
       duration: doc.duration,
       rank: doc.rank,
@@ -64,16 +64,16 @@ const downloadLinksByEpsId = async(id) =>{
   let tempServerNames = $('table.RTbl').parsetable(true , true , true)[0];
   let serverNames = tempServerNames.filter(x => x !== 'SERVIDOR');
   let urls = [];
-  
+
   try{
     const table = $('table.RTbl').html();
     const data = await urlify(table).then(res => { return res; });
-    const tempUrls = [];  
+    const tempUrls = [];
     data.map(baseUrl =>{
-      let url = baseUrl.split('"')[0]; 
+      let url = baseUrl.split('"')[0];
       tempUrls.push(url)
     });
-  
+
   Array.from({length: tempUrls.length} , (v , k) =>{
     urls.push({
       server: serverNames[k],
@@ -137,7 +137,7 @@ const getAnimeInfo = async(id , title) =>{
         return characters || null
       })
     })));
-    
+
   }catch(err){
     console.log(err)
   }
@@ -156,7 +156,7 @@ const getAnimeVideoPromo = async(title) =>{
   const data = await cloudscraper.get(jikanCharactersURL);
   const body = JSON.parse(data).promo;
   const promises = [];
-  
+
   body.map(doc =>{
     promises.push({
       title: doc.title,
@@ -209,7 +209,7 @@ const getAnimeCharacters = async(title) =>{
       }
     });
   });
-  
+
   return Promise.all(characters);
 };
 
@@ -509,7 +509,7 @@ const animeEpisodesHandler = async(id) =>{
   const animeExtraInfo = [];
   const genres = [];
   let listByEps;
-  
+
   let animeTitle = $('body div.Wrapper div.Body div div.Ficha.fchlt div.Container h2.Title').text();
   let poster = `${BASE_URL}` + $('body div div div div div aside div.AnimeCover div.Image figure img').attr('src')
   const banner = poster.replace('covers' , 'banners').trim();
@@ -525,7 +525,7 @@ const animeEpisodesHandler = async(id) =>{
   //  bannerID = JSONBanner.split('(')[1].split('.jpg')[0]
   //  banner = `${BASE_URL}${bannerID}.jpg`
   //}
-  
+
   animeExtraInfo.push({
     title: animeTitle,
     poster: poster,
@@ -538,7 +538,7 @@ const animeEpisodesHandler = async(id) =>{
   //let chaptersTitles = await getAnimeChapterTitlesHelper(animeTitle)
   //  .then(res =>{
   //    return res;
-  //  })  
+  //  })
 
   $('main.Main section.WdgtCn nav.Nvgnrs a').each((index , element) =>{
     const $element = $(element);
@@ -587,24 +587,26 @@ const animeEpisodesHandler = async(id) =>{
     listByEps = animeListEps;
 
 
-    //chaptersTitles = chaptersTitles.reverse();    
+    //chaptersTitles = chaptersTitles.reverse();
     //listByEps = animeListEps;
     //listByEps =  MergeRecursive(listByEps.slice(1) , chaptersTitles)
     //listByEps.push({
     //  nextEpisodeDate: nextEpisodeDate
     //});
     //console.log(listByEps);
-    
+
   }catch(err){
     console.error(err)
   }
   return {listByEps , genres , animeExtraInfo};
 };
 
-//getAnimeInfo('anime/5226/tokyo-ghoul' , 'Tokyo Ghoul')
-//  .then(doc =>{
-//    console.log(JSON.stringify(doc , null , 2));
-//})
+/**
+getAnimeInfo('anime/5226/tokyo-ghoul' , 'Tokyo Ghoul')
+  .then(doc =>{
+    console.log(JSON.stringify(doc , null , 2));
+})
+*/
 
 const getAnimeServers = async(id) =>{
   const res = await cloudscraper.get(`${ANIME_VIDEO_URL}${id}`);
@@ -612,7 +614,7 @@ const getAnimeServers = async(id) =>{
   const $ = cheerio.load(body);
   const scripts = $('script');
   const servers = [];
-  
+
   Array.from({length: scripts.length} , (v , k) =>{
     const $script = $(scripts[k]);
     const contents = $script.html();
