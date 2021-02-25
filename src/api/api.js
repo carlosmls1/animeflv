@@ -127,9 +127,11 @@ const getAnimeInfo = async(id , title) =>{
       rating: extra.animeExtraInfo[0].rating || null,
       genres: extra.genres || null,
       episodes: extra.listByEps || null,
+      /***
       moreInfo: await animeExtraInfo(title).then(info =>{
         return info || null
       }),
+      */
       promoList: await getAnimeVideoPromo(title).then(promo =>{
         return promo || null
       }),
